@@ -34,9 +34,10 @@ function deserializeRelationships() {
 function deserializeRelationship() {
   var resource = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var store = arguments[1];
+  var options = arguments[2];
 
-  if (store[(0, _humps.camelize)(resource.type)] && store[(0, _humps.camelize)(resource.type)][resource.id]) {
-    return deserialize((0, _extends5.default)({}, store[(0, _humps.camelize)(resource.type)][resource.id], { meta: { loaded: true } }), store);
+  if (store[(0, _humps.camelize)(resource.type)] && store[(0, _humps.camelize)(resource.type, camelizeOptions)][resource.id]) {
+    return deserialize((0, _extends5.default)({}, store[(0, _humps.camelize)(resource.type)][resource.id], { meta: { loaded: true } }), store, options);
   }
 
   return deserialize((0, _extends5.default)({}, resource, { meta: { loaded: false } }), store);
@@ -48,6 +49,7 @@ function deserialize(_ref, store) {
       attributes = _ref.attributes,
       relationships = _ref.relationships,
       meta = _ref.meta;
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
   var resource = { _type: type, _meta: meta };
 
@@ -55,7 +57,8 @@ function deserialize(_ref, store) {
 
   if (attributes) {
     resource = (0, _keys2.default)(attributes).reduce(function (resource, key) {
-      return (0, _extends5.default)({}, resource, (0, _defineProperty3.default)({}, (0, _humps.camelize)(key), attributes[key]));
+      key = options.noCamelizeAttributeKeys ? key : (0, _humps.camelize)(key);
+      return (0, _extends5.default)({}, resource, (0, _defineProperty3.default)({}, key, attributes[key]));
     }, resource);
   }
 
@@ -63,9 +66,9 @@ function deserialize(_ref, store) {
     resource = (0, _keys2.default)(relationships).reduce(function (resource, key) {
       return (0, _extends5.default)({}, resource, (0, _defineProperty3.default)({}, (0, _humps.camelize)(key), function () {
         if (Array.isArray(relationships[key].data)) {
-          return deserializeRelationships(relationships[key].data, store);
+          return deserializeRelationships(relationships[key].data, store, options);
         } else {
-          return deserializeRelationship(relationships[key].data, store);
+          return deserializeRelationship(relationships[key].data, store, options);
         }
       }));
     }, resource);

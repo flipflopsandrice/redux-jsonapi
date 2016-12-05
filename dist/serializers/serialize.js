@@ -41,6 +41,7 @@ function serializeRelationship() {
 }
 
 function serialize(_ref2) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var id = _ref2.id,
       _type = _ref2._type,
       _meta = _ref2._meta,
@@ -71,7 +72,7 @@ function serialize(_ref2) {
     }
 
     return (0, _extends6.default)({}, resource, {
-      attributes: (0, _extends6.default)({}, resource.attributes, (0, _defineProperty3.default)({}, (0, _humps.decamelize)(key), otherAttributes[key]))
+      attributes: (0, _extends6.default)({}, resource.attributes, (0, _defineProperty3.default)({}, options.noDecamelizeAttributeKeys ? key : (0, _humps.decamelize)(key), otherAttributes[key]))
     });
   }, resource);
 
