@@ -6,22 +6,23 @@ function deserializeRelationships(resources = [], store) {
     .filter((resource) => !!resource);
 }
 
-function deserializeRelationship(resource = {}, store) {
-  if (store[camelize(resource.type)] && store[camelize(resource.type)][resource.id]) {
-    return deserialize({ ...store[camelize(resource.type)][resource.id], meta: { loaded: true } }, store);
+function deserializeRelationship(resource = {}, store, options) {
+  if (store[camelize(resource.type)] && store[camelize(resource.type, camelizeOptions)][resource.id]) {
+    return deserialize({ ...store[camelize(resource.type)][resource.id], meta: { loaded: true } }, store, options);
   }
 
   return deserialize({ ...resource, meta: { loaded: false } }, store);
 }
 
-function deserialize({ id, type, attributes, relationships, meta }, store) {
+function deserialize({ id, type, attributes, relationships, meta }, store, options = {}) {
   let resource = { _type: type, _meta: meta };
 
   if (id) resource = { ...resource, id };
 
   if (attributes) {
     resource = Object.keys(attributes).reduce((resource, key) => {
-      return { ...resource, [camelize(key)]: attributes[key] };
+      key = options.noCamelizeAttributeKeys ? key : camelize(key);
+      return { ...resource, [key]: attributes[key] };
     }, resource);
   }
 
@@ -31,9 +32,9 @@ function deserialize({ id, type, attributes, relationships, meta }, store) {
         ...resource,
         [camelize(key)]: () => {
           if (Array.isArray(relationships[key].data)) {
-            return deserializeRelationships(relationships[key].data, store);
+            return deserializeRelationships(relationships[key].data, store, options);
           } else {
-            return deserializeRelationship(relationships[key].data, store)
+            return deserializeRelationship(relationships[key].data, store, options)
           }
         },
       };

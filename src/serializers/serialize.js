@@ -8,7 +8,7 @@ function serializeRelationship({ id, _type } = {}) {
   return { id, type: _type };
 }
 
-function serialize({ id, _type, _meta, ...otherAttributes }) {
+function serialize({ id, _type, _meta, ...otherAttributes }, options = {}) {
   let resource = {};
 
   if (id) resource = { ...resource, id };
@@ -45,7 +45,7 @@ function serialize({ id, _type, _meta, ...otherAttributes }) {
       ...resource,
       attributes: {
         ...resource.attributes,
-        [decamelize(key)]: otherAttributes[key],
+        [options.noDecamelizeAttributeKeys ? key : decamelize(key)]: otherAttributes[key],
       },
     };
   }, resource);
