@@ -36,7 +36,7 @@ function deserializeRelationship() {
   var store = arguments[1];
   var options = arguments[2];
 
-  if (store[(0, _humps.camelize)(resource.type)] && store[(0, _humps.camelize)(resource.type, camelizeOptions)][resource.id]) {
+  if (store[(0, _humps.camelize)(resource.type)] && store[(0, _humps.camelize)(resource.type)][resource.id]) {
     return deserialize((0, _extends5.default)({}, store[(0, _humps.camelize)(resource.type)][resource.id], { meta: { loaded: true } }), store, options);
   }
 
