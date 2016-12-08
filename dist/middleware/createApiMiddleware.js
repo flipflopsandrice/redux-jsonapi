@@ -123,9 +123,8 @@ function createMiddleware(host, defaultHeaders) {
     var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var urlParts = [host];
-
     resources.forEach(function (resource) {
-      if (resource.type) urlParts = [].concat((0, _toConsumableArray3.default)(urlParts), ['/', (0, _humps.decamelize)(resource.type)]);
+      if (resource.type) urlParts = [].concat((0, _toConsumableArray3.default)(urlParts), ['/', options.noDecamelizeAttributeKeys ? resource.type : (0, _humps.decamelize)(resource.type)]);
       if (resource.id) urlParts = [].concat((0, _toConsumableArray3.default)(urlParts), ['/', resource.id]);
     });
 
