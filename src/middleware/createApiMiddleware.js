@@ -44,9 +44,8 @@ async function handleResponse(response) {
 function createMiddleware(host, defaultHeaders) {
   const getURL = (resources, params, options = {}) => {
     let urlParts = [host];
-
     resources.forEach((resource) => {
-      if (resource.type) urlParts = [...urlParts, '/', decamelize(resource.type)];
+      if (resource.type) urlParts = [...urlParts, '/', options.noDecamelizeAttributeKeys ? resource.type : decamelize(resource.type)];
       if (resource.id) urlParts = [...urlParts, '/', resource.id];
     });
 
@@ -58,7 +57,6 @@ function createMiddleware(host, defaultHeaders) {
 
   const requestAction = async (method, { resources, params, headers, options } = {}) => {
     const url = getURL(resources, params, options);
-
     let response = await fetch(url, {
       method,
       body: ['POST', 'PATCH'].includes(method) ? serialize({ data: resources[resources.length - 1] }) : undefined,
