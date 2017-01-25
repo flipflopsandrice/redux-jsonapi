@@ -52,10 +52,12 @@ var request = function request(method, resources, _ref) {
 };
 
 var prepareResources = function prepareResources(resources) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   if (Array.isArray(resources)) return resources.map(function (resource) {
-    return (0, _serializers.serialize)(resource);
+    return (0, _serializers.serialize)(resource, options);
   });
-  return [(0, _serializers.serialize)(resources)];
+  return [(0, _serializers.serialize)(resources, options)];
 };
 
 var dataResource = function dataResource(resources) {
@@ -72,7 +74,8 @@ var read = exports.read = function read(resources) {
 var write = exports.write = function write(resources) {
   var payload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-  return request(dataResource(resources).hasOwnProperty('id') ? PATCH : POST, prepareResources(resources), payload);
+  var options = payload.options || {};
+  return request(dataResource(resources).hasOwnProperty('id') ? PATCH : POST, prepareResources(resources, options), payload);
 };
 
 var remove = exports.remove = function remove(resources) {
