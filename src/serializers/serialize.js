@@ -23,7 +23,7 @@ function serialize({ id, _type, _meta, ...otherAttributes }, options = {}) {
           ...resource,
           relationships: {
             ...resource.relationships,
-            [decamelize(key)]: {
+            [options.noDecamelizeAttributeKeys ? key : decamelize(key)]: {
               data: serializeRelationships(data),
             },
           },
@@ -34,7 +34,7 @@ function serialize({ id, _type, _meta, ...otherAttributes }, options = {}) {
         ...resource,
         relationships: {
           ...resource.relationships,
-          [decamelize(key)]: {
+          [options.noDecamelizeAttributeKeys ? key : decamelize(key)]: {
             data: data && serializeRelationship(data),
           },
         },

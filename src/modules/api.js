@@ -18,9 +18,9 @@ const request = (method, resources, { meta = {}, ...payload }) => {
   };
 };
 
-const prepareResources = (resources) => {
-  if (Array.isArray(resources)) return resources.map((resource) => serialize(resource));
-  return [serialize(resources)];
+const prepareResources = (resources, options = {}) => {
+  if (Array.isArray(resources)) return resources.map((resource) => serialize(resource, options));
+  return [serialize(resources, options)];
 };
 
 const dataResource = (resources) => {
@@ -33,7 +33,8 @@ export const read = (resources, payload = {}) => {
 };
 
 export const write = (resources, payload = {}) => {
-  return request(dataResource(resources).hasOwnProperty('id') ? PATCH : POST, prepareResources(resources), payload);
+  const options = payload.options || {};
+  return request(dataResource(resources).hasOwnProperty('id') ? PATCH : POST, prepareResources(resources, options), payload);
 };
 
 export const remove = (resources, payload = {}) => {
