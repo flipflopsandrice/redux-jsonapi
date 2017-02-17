@@ -1,14 +1,15 @@
 import { camelize } from 'humps';
 
-function deserializeRelationships(resources = [], store) {
+function deserializeRelationships(resources = [], store, options) {
   return resources
-    .map((resource) => deserializeRelationship(resource, store))
+    .map((resource) => deserializeRelationship(resource, store, options))
     .filter((resource) => !!resource);
 }
 
 function deserializeRelationship(resource = {}, store, options) {
-  if (store[camelize(resource.type)] && store[camelize(resource.type)][resource.id]) {
-    return deserialize({ ...store[camelize(resource.type)][resource.id], meta: { loaded: true } }, store, options);
+  const key = options.camelize === false ? resource.type : camelize(resource.type);
+  if (store[key] && store[key][resource.id]) {
+    return deserialize({ ...store[key][resource.id], meta: { loaded: true } }, store, options);
   }
 
   return deserialize({ ...resource, meta: { loaded: false } }, store);
@@ -21,7 +22,7 @@ function deserialize({ id, type, attributes, relationships, meta }, store, optio
 
   if (attributes) {
     resource = Object.keys(attributes).reduce((resource, key) => {
-      key = options.noCamelizeAttributeKeys ? key : camelize(key);
+      key = options.camelize === false ? key : camelize(key);
       return { ...resource, [key]: attributes[key] };
     }, resource);
   }
@@ -30,7 +31,7 @@ function deserialize({ id, type, attributes, relationships, meta }, store, optio
     resource = Object.keys(relationships).reduce((resource, key) => {
       return {
         ...resource,
-        [camelize(key)]: () => {
+        [options.camelize === false ? key : camelize(key)]: () => {
           if (Array.isArray(relationships[key].data)) {
             return deserializeRelationships(relationships[key].data, store, options);
           } else {
