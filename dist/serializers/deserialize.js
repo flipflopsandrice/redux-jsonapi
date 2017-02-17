@@ -23,9 +23,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function deserializeRelationships() {
   var resources = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var store = arguments[1];
+  var options = arguments[2];
 
   return resources.map(function (resource) {
-    return deserializeRelationship(resource, store);
+    return deserializeRelationship(resource, store, options);
   }).filter(function (resource) {
     return !!resource;
   });
@@ -36,8 +37,9 @@ function deserializeRelationship() {
   var store = arguments[1];
   var options = arguments[2];
 
-  if (store[(0, _humps.camelize)(resource.type)] && store[(0, _humps.camelize)(resource.type)][resource.id]) {
-    return deserialize((0, _extends5.default)({}, store[(0, _humps.camelize)(resource.type)][resource.id], { meta: { loaded: true } }), store, options);
+  var key = options.camelize === false ? resource.type : (0, _humps.camelize)(resource.type);
+  if (store[key] && store[key][resource.id]) {
+    return deserialize((0, _extends5.default)({}, store[key][resource.id], { meta: { loaded: true } }), store, options);
   }
 
   return deserialize((0, _extends5.default)({}, resource, { meta: { loaded: false } }), store);
@@ -57,14 +59,14 @@ function deserialize(_ref, store) {
 
   if (attributes) {
     resource = (0, _keys2.default)(attributes).reduce(function (resource, key) {
-      key = options.noCamelizeAttributeKeys ? key : (0, _humps.camelize)(key);
+      key = options.camelize === false ? key : (0, _humps.camelize)(key);
       return (0, _extends5.default)({}, resource, (0, _defineProperty3.default)({}, key, attributes[key]));
     }, resource);
   }
 
   if (relationships) {
     resource = (0, _keys2.default)(relationships).reduce(function (resource, key) {
-      return (0, _extends5.default)({}, resource, (0, _defineProperty3.default)({}, (0, _humps.camelize)(key), function () {
+      return (0, _extends5.default)({}, resource, (0, _defineProperty3.default)({}, options.camelize === false ? key : (0, _humps.camelize)(key), function () {
         if (Array.isArray(relationships[key].data)) {
           return deserializeRelationships(relationships[key].data, store, options);
         } else {

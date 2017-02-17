@@ -58,21 +58,21 @@ function serialize(_ref2) {
 
       if (Array.isArray(data)) {
         return (0, _extends6.default)({}, resource, {
-          relationships: (0, _extends6.default)({}, resource.relationships, (0, _defineProperty3.default)({}, options.noDecamelizeAttributeKeys ? key : (0, _humps.decamelize)(key), {
+          relationships: (0, _extends6.default)({}, resource.relationships, (0, _defineProperty3.default)({}, options.decamelize === false ? key : (0, _humps.decamelize)(key), {
             data: serializeRelationships(data)
           }))
         });
       }
 
       return (0, _extends6.default)({}, resource, {
-        relationships: (0, _extends6.default)({}, resource.relationships, (0, _defineProperty3.default)({}, options.noDecamelizeAttributeKeys ? key : (0, _humps.decamelize)(key), {
+        relationships: (0, _extends6.default)({}, resource.relationships, (0, _defineProperty3.default)({}, options.decamelize === false ? key : (0, _humps.decamelize)(key), {
           data: data && serializeRelationship(data)
         }))
       });
     }
 
     return (0, _extends6.default)({}, resource, {
-      attributes: (0, _extends6.default)({}, resource.attributes, (0, _defineProperty3.default)({}, options.noDecamelizeAttributeKeys ? key : (0, _humps.decamelize)(key), otherAttributes[key]))
+      attributes: (0, _extends6.default)({}, resource.attributes, (0, _defineProperty3.default)({}, options.decamelize === false ? key : (0, _humps.decamelize)(key), otherAttributes[key]))
     });
   }, resource);
 
